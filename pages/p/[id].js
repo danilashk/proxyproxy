@@ -1,26 +1,28 @@
-import { getStorage } from '../../lib/storage';
-
 export default function ProxyPage() {
   return null;
 }
 
-export async function getServerSideProps({ params, req, res, resolvedUrl }) {
+export async function getServerSideProps({ params, req, res }) {
   const { id } = params;
-  const storage = getStorage();
-  const linkData = storage.getLink(id);
-
-  if (!linkData) {
-    return {
-      notFound: true
-    };
-  }
 
   try {
-    // Увеличиваем счетчик посещений
-    storage.incrementVisits(id);
+    // Декодируем URL из base64
+    const base64Url = id
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
 
-    const originalUrl = linkData.originalUrl;
-    console.log(`Proxying ${id} to: ${originalUrl}`);
+    // Добавляем padding если нужно
+    const padding = '='.repeat((4 - base64Url.length % 4) % 4);
+    const originalUrl = Buffer.from(base64Url + padding, 'base64').toString('utf-8');
+
+    // Валидация URL
+    try {
+      new URL(originalUrl);
+    } catch (e) {
+      return { notFound: true };
+    }
+
+    console.log(`Proxying to: ${originalUrl}`);
 
     // Получаем контент с оригинального URL
     const response = await fetch(originalUrl, {
