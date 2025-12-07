@@ -1,0 +1,19 @@
+{
+  "framework": "nextjs",
+  "functions": {
+    "pages/api/*.js": {
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-robots-tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ]
+}
