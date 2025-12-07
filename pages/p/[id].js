@@ -71,7 +71,7 @@ function rewriteHtml(html, originalUrl, req) {
 
   const protocol = req.headers['x-forwarded-proto'] || 'http';
   const host = req.headers.host;
-  const proxyBase = `${protocol}://${host}/proxy`;
+  const proxyBase = `${protocol}://${host}/api/proxy`;
 
   // Переписываем абсолютные ссылки
   html = html.replace(
